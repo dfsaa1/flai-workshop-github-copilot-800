@@ -5,8 +5,9 @@ from bson import ObjectId
 class User(models.Model):
     _id = models.CharField(max_length=24, primary_key=True, default=lambda: str(ObjectId()))
     username = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=255, null=True, blank=True)
     email = models.EmailField(unique=True)
-    password = models.CharField(max_length=255)
+    password = models.CharField(max_length=255, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
@@ -72,14 +73,15 @@ class Workout(models.Model):
     _id = models.CharField(max_length=24, primary_key=True, default=lambda: str(ObjectId()))
     name = models.CharField(max_length=100)
     description = models.TextField()
-    category = models.CharField(max_length=50)
-    difficulty_level = models.CharField(max_length=20)  # beginner, intermediate, advanced
-    duration = models.IntegerField()  # in minutes
-    exercises = models.JSONField(default=list)
-    created_at = models.DateTimeField(auto_now_add=True)
+    category = models.CharField(max_length=50, null=True, blank=True)
+    difficulty_level = models.CharField(max_length=20, null=True, blank=True)  # beginner, intermediate, advanced
+    duration = models.IntegerField(null=True, blank=True)  # in minutes
+    exercises = models.JSONField(default=list, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     
     class Meta:
         db_table = 'workouts'
+        managed = False  # Don't let Django manage this table
     
     def __str__(self):
         return self.name

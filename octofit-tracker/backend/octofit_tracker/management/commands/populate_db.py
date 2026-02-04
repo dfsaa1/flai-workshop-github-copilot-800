@@ -33,12 +33,14 @@ class Command(BaseCommand):
                 '_id': 1,
                 'name': 'Team Marvel',
                 'description': 'Earth\'s Mightiest Heroes',
+                'members': [],
                 'created_at': datetime.now()
             },
             {
                 '_id': 2,
                 'name': 'Team DC',
                 'description': 'Justice League United',
+                'members': [],
                 'created_at': datetime.now()
             }
         ]
@@ -50,6 +52,7 @@ class Command(BaseCommand):
             # Team Marvel
             {
                 '_id': 1,
+                'username': 'ironman',
                 'name': 'Tony Stark',
                 'email': 'ironman@marvel.com',
                 'team_id': 1,
@@ -58,6 +61,7 @@ class Command(BaseCommand):
             },
             {
                 '_id': 2,
+                'username': 'captainamerica',
                 'name': 'Steve Rogers',
                 'email': 'captainamerica@marvel.com',
                 'team_id': 1,
@@ -66,6 +70,7 @@ class Command(BaseCommand):
             },
             {
                 '_id': 3,
+                'username': 'blackwidow',
                 'name': 'Natasha Romanoff',
                 'email': 'blackwidow@marvel.com',
                 'team_id': 1,
@@ -74,6 +79,7 @@ class Command(BaseCommand):
             },
             {
                 '_id': 4,
+                'username': 'hulk',
                 'name': 'Bruce Banner',
                 'email': 'hulk@marvel.com',
                 'team_id': 1,
@@ -82,6 +88,7 @@ class Command(BaseCommand):
             },
             {
                 '_id': 5,
+                'username': 'thor',
                 'name': 'Thor Odinson',
                 'email': 'thor@marvel.com',
                 'team_id': 1,
@@ -91,6 +98,7 @@ class Command(BaseCommand):
             # Team DC
             {
                 '_id': 6,
+                'username': 'batman',
                 'name': 'Bruce Wayne',
                 'email': 'batman@dc.com',
                 'team_id': 2,
@@ -99,6 +107,7 @@ class Command(BaseCommand):
             },
             {
                 '_id': 7,
+                'username': 'superman',
                 'name': 'Clark Kent',
                 'email': 'superman@dc.com',
                 'team_id': 2,
@@ -107,6 +116,7 @@ class Command(BaseCommand):
             },
             {
                 '_id': 8,
+                'username': 'wonderwoman',
                 'name': 'Diana Prince',
                 'email': 'wonderwoman@dc.com',
                 'team_id': 2,
@@ -115,6 +125,7 @@ class Command(BaseCommand):
             },
             {
                 '_id': 9,
+                'username': 'flash',
                 'name': 'Barry Allen',
                 'email': 'flash@dc.com',
                 'team_id': 2,
@@ -123,6 +134,7 @@ class Command(BaseCommand):
             },
             {
                 '_id': 10,
+                'username': 'aquaman',
                 'name': 'Arthur Curry',
                 'email': 'aquaman@dc.com',
                 'team_id': 2,
@@ -131,6 +143,17 @@ class Command(BaseCommand):
             }
         ]
         db.users.insert_many(users)
+
+        # Update teams with members
+        self.stdout.write('Updating teams with members...')
+        for team in teams:
+            team_members = [str(user['_id']) for user in users if user['team_id'] == team['_id']]
+            db.teams.update_one(
+                {'_id': team['_id']},
+                {'$set': {'members': team_members}}
+            )
+        self.stdout.write(f'  - Team Marvel: {len([u for u in users if u["team_id"] == 1])} members')
+        self.stdout.write(f'  - Team DC: {len([u for u in users if u["team_id"] == 2])} members')
 
         # Insert Activities
         self.stdout.write('Inserting activities...')
